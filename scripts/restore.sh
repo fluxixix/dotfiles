@@ -33,6 +33,7 @@ info "Dotfiles: $DOTFILES_DIR"
 info "Config:   $CONFIG_DIR"
 
 mkdir -p "$CONFIG_DIR"
+mkdir -p "$HOME"
 touch "$HOME/.hushlogin"
 # ──────────────────────────────────────────────────
 # Functions
@@ -55,7 +56,7 @@ link_file() {
 # ──────────────────────────────────────────────────
 section "Config dirs"
 
-for dir in aerospace alacritty bat btop conda fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi; do
+for dir in aerospace alacritty bat btop conda eza fish ghostty git go-musicfox ideavim karabiner lazygit mole neovide npm nvim starship tmux yazi; do
 	link_dir "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
 # ──────────────────────────────────────────────────
@@ -125,5 +126,19 @@ else
 		fi
 	done
 fi
+
+# ──────────────────────────────────────────────────
+# Fisher (Fish plugin manager)
+# ──────────────────────────────────────────────────
+section "Fisher"
+
+if ! command -v fisher &>/dev/null; then
+	mkdir -p "$HOME/.local/share/fish/site-functions"
+	curl -sL https://git.io/fisher | fish 2>/dev/null
+	info "Fisher installed"
+fi
+
+fish 2>/dev/null -c "fisher update"
+info "Fisher plugins installed"
 
 echo -e "\n${GREEN}Dotfiles restored successfully!${NC}"
