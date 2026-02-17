@@ -59,7 +59,7 @@ if status is-interactive
     end
 
     # Theme
-
+    fish_config theme choose ayu
     # ── Abbreviations
 
     # General
