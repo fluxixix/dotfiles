@@ -84,4 +84,18 @@ if [[ "$OS" == "Darwin" ]]; then
 fi
 
 # --------------------------------------------------
+# Fisher (Fish plugin manager)
+# --------------------------------------------------
+section "Fisher"
+
+if ! command -v fisher &>/dev/null; then
+	mkdir -p "$HOME/.local/share/fish/site-functions"
+	curl -sL https://git.io/fisher | fish --stderr-nul --quiet
+	info "Fisher installed"
+fi
+
+fish --stderr-nul --quiet -c "fisher install"
+info "Fisher plugins installed"
+
+# --------------------------------------------------
 echo -e "\n${GREEN}Dotfiles restored successfully!${NC}"
