@@ -132,13 +132,16 @@ fi
 # ──────────────────────────────────────────────────
 section "Fisher"
 
-if ! command -v fisher &>/dev/null; then
+if ! fish -c "functions -q fisher" &>/dev/null; then
 	mkdir -p "$HOME/.local/share/fish/site-functions"
 	curl -sL https://git.io/fisher | fish 2>/dev/null
-	info "Fisher installed"
+	if fish -c "functions -q fisher" &>/dev/null; then
+		info "Fisher installed"
+	else
+		warn "Fisher installation failed, skipping plugin installation"
+	fi
 fi
 
-fish 2>/dev/null -c "fisher update"
-info "Fisher plugins installed"
+fish -c "functions -q fisher" &>/dev/null && fish -c "fisher update" && info "Fisher plugins installed"
 
 echo -e "\n${GREEN}Dotfiles restored successfully!${NC}"
