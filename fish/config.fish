@@ -28,16 +28,25 @@ if test -x /opt/homebrew/bin/brew
 end
 
 # ── Conda
-function conda
-    functions --erase conda
-    if test -f "$CONDA_ROOT/bin/conda"
-        eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" | source
-    else if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-        source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-    else
-        fish_add_path -g "$CONDA_ROOT/bin"
-    end
-    conda $argv
+# function conda
+#     functions --erase conda
+#     if test -f "$CONDA_ROOT/bin/conda"
+#         eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" | source
+#     else if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+#         source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+#     else
+#         fish_add_path -g "$CONDA_ROOT/bin"
+#     end
+#     conda $argv
+# end
+
+# ── Conda (auto-activate base)
+if test -f "$CONDA_ROOT/bin/conda"
+    eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" | source
+else if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+    source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+else
+    fish_add_path -g "$CONDA_ROOT/bin"
 end
 
 # ── Interactive
