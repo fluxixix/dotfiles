@@ -33,8 +33,9 @@ function u --description "Update everything"
 
     # ── Neovim
     if command -q nvim
-        nvim --headless "+AstroUpdate"      +qa
+        # sync plugin manager first, then update everything else
         nvim --headless "+Lazy! sync"       +qa
+        nvim --headless "+AstroUpdate"       +qa
         nvim --headless "+MasonToolsUpdate" +qa
         nvim --headless "+TSUpdateSync"     +qa
     end
