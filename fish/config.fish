@@ -144,4 +144,7 @@ if status is-interactive
     fzf_configure_bindings --directory=\ct --history=\cr
     bind \cg ripgrep_search
 
+    abbr -a pon  'proxy'
+    abbr -a poff 'unproxy'
+
 end
