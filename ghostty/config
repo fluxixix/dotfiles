@@ -71,10 +71,10 @@ keybind = super+shift+l=new_split:right
 keybind = ctrl+f=toggle_split_zoom
 
 # focus
-keybind = ctrl+h=goto_split:left
-keybind = ctrl+j=goto_split:down
-keybind = ctrl+k=goto_split:up
-keybind = ctrl+l=goto_split:right
+keybind = ctrl+shift+h=goto_split:left
+keybind = ctrl+shift+j=goto_split:down
+keybind = ctrl+shift+k=goto_split:up
+keybind = ctrl+shift+l=goto_split:right
 
 # resize
 keybind = ctrl+shift+equal=equalize_splits
