@@ -33,10 +33,10 @@ else
 	warn "GitHub SSH 尚未配置，开始设置..."
 
 	# Generate key
-	if [[ -f "$HOME/.ssh/id_ed25519" ]]; then
+	if [[ -f "$HOME/.ssh/github_id_rsa" ]]; then
 		info "SSH key already exists, skipping generation"
 	else
-		ssh-keygen -t ed25519 -C "nai.ying.cnhyk@gmail.com"
+		ssh-keygen -t rsa -C "944292511@qq.com" -f "$HOME/.ssh/github_id_rsa"
 		info "SSH key generated"
 	fi
 
@@ -45,7 +45,7 @@ else
 	info "ssh-agent started"
 
 	# Add key to ssh-agent
-	ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519"
+	ssh-add --apple-use-keychain "$HOME/.ssh/github_id_rsa"
 	info "Key added to ssh-agent"
 
 	# Configure ~/.ssh/config
@@ -55,7 +55,7 @@ else
   Port 443
   AddKeysToAgent yes
   UseKeychain yes
-  IdentityFile ~/.ssh/id_ed25519"
+  IdentityFile ~/.ssh/github_id_rsa"
 
 	touch "$SSH_CONFIG"
 
@@ -68,7 +68,7 @@ else
 	fi
 
 	# Copy public key and wait for user
-	pbcopy <"$HOME/.ssh/id_ed25519.pub"
+	pbcopy <"$HOME/.ssh/github_id_rsa.pub"
 	info "Public key copied to clipboard"
 
 	echo ""
@@ -128,7 +128,7 @@ DOTFILES_DIR="$HOME/dotfiles"
 if [[ -d "$DOTFILES_DIR" ]]; then
 	info "Dotfiles already exist at $DOTFILES_DIR, skipping"
 else
-	git clone git@github.com:ANRlm/dotfiles.git "$DOTFILES_DIR"
+		git clone git@github.com:fluxixix/dotfiles.git "$DOTFILES_DIR"
 	info "Cloned dotfiles to $DOTFILES_DIR"
 fi
 # ──────────────────────────────────────────────────
