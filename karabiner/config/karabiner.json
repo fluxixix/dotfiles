@@ -354,12 +354,8 @@
             },
             "devices": [
                 {
-                    "identifiers": {
-                        "is_keyboard": true,
-                        "is_pointing_device": true,
-                        "vendor_id": 2007
-                    },
-                    "ignore": false
+                    "identifiers": { "is_keyboard": true },
+                    "ignore": true
                 }
             ],
             "name": "Default",
