@@ -5,6 +5,10 @@ set -gx EDITOR nvim
 set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
 set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
 set -gx NPM_CONFIG_USERCONFIG ~/.config/npm/npmrc
+set -gx PNPM_HOME "$HOME/Library/pnpm"
+set -gx OMO_SEND_ANONYMOUS_TELEMETRY 0
+set -gx CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 1
+set -gx CLAUDE_CODE_NO_FLICKER 1
 
 # ── Homebrew
 set -gx HOMEBREW_API_DOMAIN    "https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
@@ -17,36 +21,36 @@ set -gx HOMEBREW_MAKE_JOBS      (sysctl -n hw.logicalcpu)
 
 # ── PATH
 fish_add_path "$HOME/.local/bin"
-fish_add_path "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path "/opt/homebrew/opt/openjdk/bin"
-fish_add_path "/opt/homebrew/opt/rustup/bin"
+fish_add_path -g "/opt/homebrew/opt/rustup/bin"
 fish_add_path "$HOME/.antigravity/antigravity/bin"
+fish_add_path -g "$PNPM_HOME/bin"
 
 # ── Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
     /opt/homebrew/bin/brew shellenv | source
 end
 
-# ── Conda
-# function conda
-#     functions --erase conda
-#     if test -f "$CONDA_ROOT/bin/conda"
-#         eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" | source
-#     else if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-#         source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-#     else
-#         fish_add_path -g "$CONDA_ROOT/bin"
-#     end
-#     conda $argv
-# end
+# ── Conda (lazy)
+function conda
+    if not set -q CONDA_ROOT
+        echo "lazyconda: \$CONDA_ROOT is not set" >&2
+        return 1
+    end
 
-# ── Conda (auto-activate base)
-if test -f "$CONDA_ROOT/bin/conda"
-    eval "$CONDA_ROOT/bin/conda" "shell.fish" "hook" | source
-else if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-    source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-else
-    fish_add_path -g "$CONDA_ROOT/bin"
+    if test -f "$CONDA_ROOT/bin/conda"
+        eval "$CONDA_ROOT/bin/conda" "shell.fish" hook | source
+        or return $status
+    else if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+        source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
+        or return $status
+    else
+        fish_add_path -g "$CONDA_ROOT/bin"
+        functions --erase conda
+    end
+
+    conda $argv
 end
 
 # ── Interactive
@@ -82,6 +86,7 @@ if status is-interactive
     abbr -a disk 'smartctl -a disk3'
     abbr -a copy 'pbcopy'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
+    abbr -a claude 'claude --dangerously-skip-permissions'
 
     # Xcode
     abbr -a xcode-clt 'sudo xcode-select -s /Library/Developer/CommandLineTools'
@@ -141,8 +146,10 @@ if status is-interactive
     set -g fzf_diff_highlighter  delta --paging=never --features="mellow-barbet" --syntax-theme="Catppuccin Mocha"
     set -g fzf_history_time_format %d-%m-%y
 
-    fzf_configure_bindings --directory=\ct --history=\cr
-    bind \cg ripgrep_search
+    function fish_user_key_bindings
+        fzf_configure_bindings --directory=\ct --history=\cr
+        bind \cg ripgrep_search
+    end
 
     abbr -a pon  'proxy'
     abbr -a poff 'unproxy'

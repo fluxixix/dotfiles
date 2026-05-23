@@ -1,4 +1,6 @@
 function u --description "Update everything"
+    set -g __u_failures 0
+
     # ── helpers ──────────────────────────────────────────────────────────────
     function _section
         set_color --bold cyan
@@ -11,19 +13,30 @@ function u --description "Update everything"
         set_color green; echo "  ✓ $argv"; set_color normal
     end
 
+    function _fail
+        set_color red; echo "  ✗ $argv"; set_color normal
+    end
+
     function _skip
         set_color yellow; echo "  - $argv (not found, skipped)"; set_color normal
     end
 
+    function _run --argument-names label
+        set -e argv[1]
+        $argv
+        set -l status_code $status
+        if test $status_code -eq 0
+            _ok "$label"
+        else
+            _fail "$label (exit $status_code)"
+            set -g __u_failures (math $__u_failures + 1)
+        end
+        return $status_code
+    end
+
     # ── Homebrew ──────────────────────────────────────────────────────────────
     _section "Homebrew"
-    brew update
-    brew upgrade
-    brew upgrade --cask
-    brew autoremove
-    brew cleanup --prune=all
-    brew bundle dump --force --file ~/dotfiles/Brewfile
-    _ok "Homebrew done"
+    _run "Homebrew done" bash -lc "brew update && brew upgrade && brew upgrade --cask --greedy && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile"
 
     # ── Google Chrome — block auto-update & AI model download ─────────────
     _section "Chrome (lock updater & AI models)"
@@ -45,12 +58,10 @@ function u --description "Update everything"
     # ── Neovim (AstroNvim) ────────────────────────────────────────────────────
     _section "Neovim"
     if command -q nvim
-        # sync plugin manager first, then update everything else
-        nvim --headless "+Lazy! sync"       +qa
-        nvim --headless "+AstroUpdate"      +qa
-        nvim --headless "+MasonToolsUpdate" +qa
-        nvim --headless "+TSUpdateSync"     +qa
-        _ok "Neovim plugins updated"
+        _run "Plugins synced" bash -lc "nvim --headless '+Lazy! sync' +qa 2>/dev/null"
+        _run "AstroUpdate" bash -lc "nvim --headless '+AstroUpdate' +qa 2>/dev/null"
+        _run "Mason packages updated" bash -lc "nvim --headless '+MasonToolsUpdate' +qa 2>/dev/null"
+        _run "Treesitter updated" bash -lc "nvim --headless '+TSUpdateSync' +qa 2>/dev/null"
     else
         _skip "nvim"
     end
@@ -58,7 +69,6 @@ function u --description "Update everything"
     # ── Go toolchain ──────────────────────────────────────────────────────────
     _section "Go"
     if command -q go
-        # update all non-stdlib binaries installed via `go install`
         set _gobin (go env GOPATH)/bin
         if test -d $_gobin
             for _bin in $_gobin/*
@@ -76,10 +86,7 @@ function u --description "Update everything"
     # ── Conda / Miniforge ────────────────────────────────────────────────────
     _section "Conda"
     if command -q conda
-        conda update conda -y
-        conda update --all -y
-        conda clean --all -y
-        _ok "Conda updated"
+        _run "Conda updated" bash -lc "conda update conda -y && conda update --all -y && conda clean --all -y"
     else
         _skip "conda"
     end
@@ -89,14 +96,13 @@ function u --description "Update everything"
     if command -q rustup
         rustup update
         if command -q cargo
-            # cargo-update: `cargo install cargo-update` to enable
             if test -x ~/.cargo/bin/cargo-install-update
-                cargo install-update -a
+                _run "cargo-update" cargo install-update -a
             else
                 _skip "cargo-update (run: cargo install cargo-update)"
             end
             if test -x ~/.cargo/bin/cargo-cache
-                cargo cache --autoclean
+                _run "cargo-cache" cargo cache --autoclean
             else
                 _skip "cargo-cache (run: cargo install cargo-cache)"
             end
@@ -109,16 +115,13 @@ function u --description "Update everything"
     # ── Node ──────────────────────────────────────────────────────────────────
     _section "Node"
     if command -q npm
-        npm update -g
+        _run "npm updated" npm update -g
         npm cache clean --force
-        _ok "npm updated"
     else
         _skip "npm"
     end
     if command -q pnpm
-        pnpm update -g
-        pnpm store prune
-        _ok "pnpm updated"
+        _run "pnpm updated" bash -lc "pnpm update -g && pnpm store prune"
     else
         _skip "pnpm"
     end
@@ -126,8 +129,7 @@ function u --description "Update everything"
     # ── Python (uv) ───────────────────────────────────────────────────────────
     _section "Python / uv"
     if command -q uv
-        uv tool upgrade --all
-        _ok "uv tools upgraded"
+        _run "uv tools upgraded" uv tool upgrade --all
     else
         _skip "uv"
     end
@@ -135,8 +137,7 @@ function u --description "Update everything"
     # ── Shell ─────────────────────────────────────────────────────────────────
     _section "Fish / Fisher"
     if functions -q fisher
-        fisher update
-        _ok "Fisher plugins updated"
+        _run "Fisher plugins updated" fisher update
     else
         _skip "fisher"
     end
@@ -144,8 +145,7 @@ function u --description "Update everything"
     _section "Tmux / TPM"
     set _tpm "$HOME/.config/tmux/plugins/tpm/bin/update_plugins"
     if test -x $_tpm
-        $_tpm all
-        _ok "TPM plugins updated"
+        _run "TPM plugins updated" $_tpm all
     else
         _skip "TPM (~/.config/tmux/plugins/tpm not found)"
     end
@@ -153,8 +153,7 @@ function u --description "Update everything"
     # ── Tools ─────────────────────────────────────────────────────────────────
     _section "Yazi plugins"
     if command -q ya
-        ya pkg upgrade
-        _ok "Yazi plugins updated"
+        _run "Yazi plugins updated" ya pkg upgrade
     else
         _skip "ya"
     end
@@ -162,8 +161,7 @@ function u --description "Update everything"
     # ── macOS App Store ───────────────────────────────────────────────────────
     _section "Mac App Store"
     if command -q mas
-        mas update
-        _ok "MAS updated"
+        _run "MAS updated" mas upgrade
     else
         _skip "mas"
     end
@@ -171,23 +169,27 @@ function u --description "Update everything"
     # ── Mole ──────────────────────────────────────────────────────────────────
     _section "Mole"
     if command -q mo
-        printf '\n' | mo clean
+        _run "Mole cleaned" bash -lc "printf '\\n' | mo clean"
         mo purge
-        _ok "Mole cleaned"
     else
         _skip "mo (mole)"
     end
 
     # ── App caches ────────────────────────────────────────────────────────────
     _section "App Caches"
-    rm -rf ~/Library/Application\ Support/CleanShot/media
-    _ok "CleanShot media cleared"
+    _run "CleanShot media cleared" rm -rf ~/Library/Application\ Support/CleanShot/media
 
     # ── Done ──────────────────────────────────────────────────────────────────
     echo ""
-    set_color --bold green
-    echo "✓ All updated"
+    if test $__u_failures -eq 0
+        set_color --bold green
+        echo "✓ All updated"
+    else
+        set_color --bold red
+        echo "✗ Update finished with $__u_failures failure(s)"
+    end
     set_color normal
 
-    functions --erase _section _ok _skip
+    functions --erase _section _ok _fail _skip _run
+    set -e __u_failures
 end

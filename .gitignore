@@ -1,7 +1,6 @@
 .DS_Store
 
 tmux/plugins/
-oh-my-tmux/
 
 fish/fish_variables
 fish/completions/
@@ -11,8 +10,18 @@ fish/functions/_fzf_*.fish
 fish/functions/fisher.fish
 fish/functions/fzf_configure_bindings.fish
 
-mole/mole.log
-mole/operations.log
+karabiner/config/automatic_backups/
+karabiner/config/assets/
+karabiner/config/karabiner.json
 
-karabiner/automatic_backups/
-karabiner/assets/
+yazi/plugins/
+yazi/flavors/
+
+scripts/license.sh
+
+.claude/worktrees/
+.omc/sessions/
+.omc/project-memory.json
+.omc/state/
+
+.trae
