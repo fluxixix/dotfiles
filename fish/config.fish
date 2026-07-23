@@ -86,6 +86,7 @@ if status is-interactive
     abbr -a disk 'smartctl -a disk3'
     abbr -a copy 'pbcopy'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
+    abbr -a qc  'qoderclicn'
     abbr -a claude 'claude --dangerously-skip-permissions'
 
     # Xcode
