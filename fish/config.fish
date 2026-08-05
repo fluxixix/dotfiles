@@ -148,7 +148,7 @@ if status is-interactive
     set -g fzf_history_time_format %d-%m-%y
 
     function fish_user_key_bindings
-        fzf_configure_bindings --directory=\ct --history=\cr
+    #    fzf_configure_bindings --directory=\ct --history=\cr
         bind \cg ripgrep_search
     end
 
