@@ -20,6 +20,7 @@ set -gx HOMEBREW_NO_ANALYTICS   1
 set -gx HOMEBREW_MAKE_JOBS      (sysctl -n hw.logicalcpu)
 
 # ── PATH
+fish_add_path "$HOME/.asdf/shims" # asdf
 fish_add_path "$HOME/.local/bin"
 fish_add_path -g "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
 fish_add_path "/opt/homebrew/opt/openjdk/bin"
@@ -161,3 +162,6 @@ end
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
+
+# strix
+fish_add_path /Users/chao/.strix/bin
