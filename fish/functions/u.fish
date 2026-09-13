@@ -56,7 +56,7 @@ function u --description "Update everything"
 
     # ── Homebrew ──────────────────────────────────────────────────────────────
     _section "Homebrew"
-    _run "Homebrew done" bash -lc "brew update && brew upgrade --no-ask && brew upgrade --cask --greedy --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode --no-describe"
+    _run "Homebrew done" bash -lc "brew update && brew upgrade --no-ask && brew upgrade --cask --greedy --no-ask && brew autoremove && brew cleanup --prune=all"
 
     # ── Google Chrome — block auto-update & AI model download ─────────────
     _section "Chrome (lock updater & AI models)"
