@@ -1,8 +1,69 @@
+<div align="center">
+
 # dotfiles
 
-Apple Silicon macOS 的个人配置仓库，remote 为 `git@github.com:fluxixix/dotfiles.git`，通过符号链接部署到 `~/.config`。Karabiner-Elements 相关配置已从本仓库移除。
+**Apple Silicon macOS 的个人配置仓库**
 
-## 目录清单
+终端 `Ghostty` · Shell `Fish` · 编辑器 `Neovim` · 提示符 `Starship` · 包管理 `Homebrew`
+
+一份「手写配置进仓库，插件主题交给包管理器」的 dotfiles：仓库里只放我真正手写的部分，其余全部由 `.gitignore` 排除、按需恢复。
+
+[![macOS](https://img.shields.io/badge/macOS-Apple%20Silicon-000000?style=flat-square&logo=apple&logoColor=white)](https://www.apple.com/macos/)
+[![Shell](https://img.shields.io/badge/shell-fish-4aae47?style=flat-square)](https://fishshell.com/)
+[![Editor](https://img.shields.io/badge/editor-Neovim-57A143?style=flat-square&logo=neovim&logoColor=white)](https://neovim.io/)
+[![Terminal](https://img.shields.io/badge/terminal-Ghostty-3D5A80?style=flat-square)](https://ghostty.org/)
+[![Homebrew](https://img.shields.io/badge/packages-Homebrew-FBB040?style=flat-square&logo=homebrew&logoColor=white)](https://brew.sh/)
+[![Last commit](https://img.shields.io/github/last-commit/fluxixix/dotfiles?style=flat-square)](https://github.com/fluxixix/dotfiles/commits/main)
+[![Stars](https://img.shields.io/github/stars/fluxixix/dotfiles?style=flat-square&color=yellow)](https://github.com/fluxixix/dotfiles/stargazers)
+
+</div>
+
+## 📖 目录
+
+- [快速开始](#-快速开始)
+- [目录结构](#-目录结构)
+- [技术栈](#-技术栈)
+- [部署流程](#-部署流程)
+- [配置怎么落到 `~/.config`](#-配置怎么落到-config)
+- [常用操作](#️-常用操作)
+- [更新与维护](#-更新与维护)
+- [设计取舍](#-设计取舍)
+
+## 🚀 快速开始
+
+前置条件：
+
+- 安装 Homebrew 与 Git，并配置好 GitHub SSH 访问（`scripts/setup.sh` 可代为生成密钥并写入 `~/.ssh/config`；首次使用需先在 GitHub 添加公钥）。
+- 登录 Mac App Store 账户，Brewfile 中包含 `mas` 应用。
+
+克隆到 `~/dotfiles`——建议就用这个路径，`scripts/setup.sh` 固定按 `$HOME/dotfiles` 克隆并调用其中的 `restore.sh`：
+
+```sh
+git clone git@github.com:fluxixix/dotfiles.git ~/dotfiles
+```
+
+主路径是执行部署脚本：
+
+```sh
+bash ~/dotfiles/scripts/restore.sh
+```
+
+只想手动链接、不跑完整脚本的话，等价的 Fish 写法如下（目录清单与 `restore.sh` 一致）：
+
+```fish
+mkdir -p ~/.config
+for dir in aerospace bat btop eza fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi
+    ln -s ~/dotfiles/$dir ~/.config/$dir
+end
+```
+
+Yazi 的插件与风味不在仓库内，需要单独恢复：
+
+```fish
+ya pkg install
+```
+
+## 📁 目录结构
 
 | 目录 / 文件 | 内容 |
 | --- | --- |
@@ -28,34 +89,42 @@ Apple Silicon macOS 的个人配置仓库，remote 为 `git@github.com:fluxixix/
 
 `yazi/plugins/`、`yazi/flavors/`、`fish/completions/`、`fish/conf.d/`、`fish/themes/`、`tmux/plugins/`、`mole/` 及部分 Fisher/fzf 生成的函数已在 `.gitignore` 中排除，需要由对应包管理器恢复。
 
-## 部署步骤
+## 🧰 技术栈
 
-前置条件：
+| 场景 | 选了谁 | 配置位置 |
+| --- | --- | --- |
+| 终端 | Ghostty（含自定义光标着色器） | [ghostty/](ghostty/) |
+| Shell | Fish + Fisher 插件 | [fish/](fish/) |
+| 提示符 | Starship | [starship/](starship/) |
+| 多路复用 | tmux（前缀键 `Ctrl-A`）+ TPM | [tmux/](tmux/) |
+| 编辑器 | Neovim（AstroNvim v5，lazy.nvim 管理） | [nvim/](nvim/) |
+| GUI 编辑器 | Neovide、IdeaVim | [neovide/](neovide/)、[ideavim/](ideavim/) |
+| 文件管理 | Yazi、eza、bat | [yazi/](yazi/)、[eza/](eza/)、[bat/](bat/) |
+| 搜索 | ripgrep + fzf（`Ctrl-G` 实时搜索） | [fish/functions/](fish/functions/) |
+| 窗口管理 | AeroSpace + borders | [aerospace/](aerospace/) |
+| 版本控制 | git + Delta + git-lfs | [git/](git/) |
+| 语言运行时 | Go、Rust（rustup）、Node（npm/pnpm）、Python（uv）、OpenJDK | [Brewfile](Brewfile) |
 
-- 安装 Homebrew 与 Git，并配置好 GitHub SSH 访问（`scripts/setup.sh` 可代为生成密钥并写入 `~/.ssh/config`；首次使用需先在 GitHub 添加公钥）。
-- 登录 Mac App Store 账户，Brewfile 中包含 `mas` 应用。
+完整的软件清单都在 [Brewfile](Brewfile) 里，包含 Homebrew formula、Cask 应用、VS Code 扩展、Cargo 与 uv 工具。
 
-克隆到 `~/dotfiles`（建议放在该路径：`scripts/setup.sh` 固定按 `$HOME/dotfiles` 克隆并调用其中的 `restore.sh`）：
+## 🔗 部署流程
 
-```sh
-git clone git@github.com:fluxixix/dotfiles.git ~/dotfiles
+```mermaid
+flowchart TD
+    A["git clone → ~/dotfiles"] --> B["bash scripts/restore.sh"]
+    B --> C["准备：创建 ~/.config 与 ~/.hushlogin"]
+    C --> D["软链接 17 个配置目录到 ~/.config"]
+    D --> E["brew bundle --file=~/dotfiles/Brewfile"]
+    E --> F["克隆 TPM 并 install_plugins"]
+    F --> G["写入 /etc/shells 并 chsh 切换 Fish"]
+    G --> H["cargo install cargo-cache cargo-update"]
+    H --> I["引导 Fisher 并 fisher update"]
+    I --> Z["完成"]
+    style A fill:#4aae47,color:#fff
+    style Z fill:#3d5a80,color:#fff
 ```
 
-主路径为执行部署脚本：
-
-```sh
-bash ~/dotfiles/scripts/restore.sh
-```
-
-脚本会依次完成：
-
-1. 创建 `~/.config` 并写入 `~/.hushlogin`。
-2. 软链接以下配置目录到 `~/.config`：`aerospace bat btop eza fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi`。目标已是非软链接的现有文件或目录时，脚本会警告并拒绝覆盖。
-3. 执行 `brew bundle --file=~/dotfiles/Brewfile` 安装依赖。
-4. 若 `~/.config/tmux/plugins/tpm` 不存在则克隆 TPM，并运行 `install_plugins` 安装 tmux 插件。
-5. 通过 `raw.githubusercontent.com` 引导 Fisher，随后执行 `fisher update` 安装 Fish 插件。
-6. 将 fish 路径写入 `/etc/shells` 并 `chsh` 切换默认 Shell。
-7. 通过 `cargo install` 安装 `cargo-cache`、`cargo-update`。
+脚本以 `set -Eeuo pipefail` 运行，任一步失败即中止；只有软链接步骤例外——目标已被非软链接的现有文件或目录占用时会警告并跳过，继续执行后续步骤。
 
 需要手动完成或授权的环节：
 
@@ -63,22 +132,22 @@ bash ~/dotfiles/scripts/restore.sh
 - Mac App Store 应用安装需要先登录账户。
 - 首次使用需先配置 GitHub SSH 密钥。
 
-Yazi 的插件与风味不在仓库内，需要单独恢复：
+## 📂 配置怎么落到 `~/.config`
 
-```fish
-ya pkg install
+仓库按「一个工具一个目录」组织，部署时每个目录对应一个软链接，工具直接读 `~/.config/<工具>/`：
+
+```mermaid
+flowchart LR
+    A["~/dotfiles/&lt;工具&gt;/<br/>手写配置入仓库"] -- "ln -s" --> B["~/.config/&lt;工具&gt;/<br/>工具实际读取"]
+    P["插件 / 主题 / 补全"] -- "Fisher · TPM · ya pkg · lazy.nvim" --> B
+    style A fill:#4aae47,color:#fff
+    style B fill:#3d5a80,color:#fff
+    style P fill:#f0a500,color:#000
 ```
 
-若只想手动链接而不跑完整脚本，等价的 Fish 写法如下（目录清单与 `restore.sh` 一致）：
+这样改配置就是改仓库文件，`git status` 立刻能看到改动；反过来 `git pull` 之后也无需重新部署。
 
-```fish
-mkdir -p ~/.config
-for dir in aerospace bat btop eza fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi
-    ln -s ~/dotfiles/$dir ~/.config/$dir
-end
-```
-
-## 常用操作
+## ⌨️ 常用操作
 
 以下缩写定义在 Fish 的 `config.fish` 中：
 
@@ -120,7 +189,7 @@ end
 
 tmux 以前缀键 `Ctrl-A` 为主：`=` / `-` 水平/垂直分屏，`c` 新建窗口，`r` 进入调整大小模式后按 `h/j/k/l` 调整、`q` 或 `Escape` 退出，`R` 重新加载配置。鼠标已启用，窗口与窗格序号从 1 开始。
 
-## 更新与维护
+## 🔄 更新与维护
 
 `u` 会就地更新以下内容，某一项失败会继续执行其余独立步骤，并累计失败次数：
 
@@ -137,8 +206,14 @@ tmux 以前缀键 `Ctrl-A` 为主：`=` / `-` 水平/垂直分屏，`c` 新建�
 
 结尾会输出 `✓ All updated` 或 `✗ Update finished with N failure(s)`，以失败计数汇总结果（函数本身不会返回非零退出码）。`u` 不会拉取本仓库，配置同步需自行执行 Git 操作。
 
-Homebrew 现在要求非官方 tap 显式信任，本仓库已在 Brewfile 中为所有第三方 tap 声明 `trusted: true`，因此 `brew bundle` 无需手动交互。
+## 💡 设计取舍
 
-`Brewfile` 由手工维护：`u` 不再自动生成它，新增或移除依赖需要手动编辑，并为非官方 tap 保留 `trusted: true`。
+**仓库只放手写配置。** 由包管理器分发的插件、flavor、补全与主题（见上方 `.gitignore` 说明）不入库，交给 Fisher / TPM / `ya pkg` / lazy.nvim 各自恢复。仓库因此保持小而可读，代价是首次部署多几步。
 
-配置按功能分组，标题沿用 `# ── 类别 ──` 的注释样式（见 `fish/config.fish`、`fish/functions/u.fish`）。
+**一个工具一个目录，一个软链接。** 目录名与 `~/.config` 下的名字一一对应，不写映射表、不做条件分支，新增工具只是往 `restore.sh` 的清单里加一个名字。
+
+**`u` 失败不中断。** 每个步骤独立执行、分别计数，最后统一汇总 `✓` / `✗`，避免某一步网络超时就让整轮更新白跑。
+
+**`Brewfile` 由手工维护。** `u` 不再自动生成它，新增或移除依赖需要手动编辑，并为非官方 tap 保留 `trusted: true`。
+
+**配置按功能分组。** 文件内标题沿用 `# ── 类别 ──` 的注释样式（见 `fish/config.fish`、`fish/functions/u.fish`）。
