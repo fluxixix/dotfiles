@@ -1,10 +1,10 @@
-tap "anhoder/go-musicfox"
-tap "anomalyco/tap"
-tap "felixkratz/formulae"
-tap "hmbown/deepseek-tui"
-tap "nikitabobko/tap"
-tap "oven-sh/bun"
-tap "tw93/tap"
+tap "go-musicfox/go-musicfox", trusted: true
+tap "anomalyco/tap", trusted: true
+tap "felixkratz/formulae", trusted: true
+tap "hmbown/deepseek-tui", trusted: true
+tap "nikitabobko/tap", trusted: true
+tap "oven-sh/bun", trusted: true
+tap "tw93/tap", trusted: true
 brew "atoll"
 brew "asdf"
 brew "bash"
@@ -54,7 +54,7 @@ brew "xcodegen"
 brew "yazi"
 brew "zellij"
 brew "zoxide"
-brew "anhoder/go-musicfox/go-musicfox"
+brew "go-musicfox/go-musicfox/go-musicfox"
 brew "felixkratz/formulae/borders"
 brew "hmbown/deepseek-tui/deepseek-tui"
 brew "oven-sh/bun/bun"
