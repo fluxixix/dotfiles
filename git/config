@@ -19,18 +19,30 @@
     dark = true      # or light = true, or omit for auto-detection
     syntax-theme = Catppuccin Mocha
     features = mellow-barbet
+    hyperlinks = true
 
 [merge]
     conflictStyle = zdiff3
 
+[rerere]
+    enabled = true
+
 [diff]
+    algorithm = histogram
     colorMoved = default
+    colorMovedWS = allow-indentation-change
 
 [init]
     defaultBranch = main
 
+[fetch]
+    prune = true
+
 [pull]
     rebase = true
+
+[rebase]
+    autoStash = true
 
 [push]
     autoSetupRemote = true

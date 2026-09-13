@@ -27,6 +27,7 @@ fish_add_path "/opt/homebrew/opt/openjdk/bin"
 fish_add_path -g "/opt/homebrew/opt/rustup/bin"
 fish_add_path "$HOME/.antigravity/antigravity/bin"
 fish_add_path -g "$PNPM_HOME/bin"
+fish_add_path "$HOME/.strix/bin" # strix
 
 # ── Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
@@ -52,6 +53,11 @@ function conda
     end
 
     conda $argv
+end
+
+# Happier: point the Codex CLI at the installed executable
+if command -q codex
+    set -gx HAPPIER_CODEX_PATH (command -v codex)
 end
 
 # ── Interactive
@@ -162,6 +168,3 @@ end
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
-
-# strix
-fish_add_path /Users/chao/.strix/bin

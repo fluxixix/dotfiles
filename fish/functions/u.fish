@@ -34,9 +34,29 @@ function u --description "Update everything"
         return $status_code
     end
 
+    # 网络类更新（如 ya pkg upgrade）失败后自动重试
+    function _retry --argument-names max_attempts
+        set -e argv[1]
+        set -l attempt 1
+
+        while true
+            $argv
+            set -l status_code $status
+            if test $status_code -eq 0; or test $attempt -ge $max_attempts
+                return $status_code
+            end
+
+            set_color yellow
+            echo "  ↻ Retrying ($attempt/$max_attempts)"
+            set_color normal
+            sleep 2
+            set attempt (math $attempt + 1)
+        end
+    end
+
     # ── Homebrew ──────────────────────────────────────────────────────────────
     _section "Homebrew"
-    _run "Homebrew done" bash -lc "brew update && brew upgrade && brew upgrade --cask --greedy && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile"
+    _run "Homebrew done" bash -lc "brew update && brew upgrade --no-ask && brew upgrade --cask --greedy --no-ask && brew autoremove && brew cleanup --prune=all && brew bundle dump --force --file ~/dotfiles/Brewfile --no-vscode --no-describe"
 
     # ── Google Chrome — block auto-update & AI model download ─────────────
     _section "Chrome (lock updater & AI models)"
@@ -143,17 +163,24 @@ function u --description "Update everything"
     end
 
     _section "Tmux / TPM"
-    set _tpm "$HOME/.config/tmux/plugins/tpm/bin/update_plugins"
-    if test -x $_tpm
-        _run "TPM plugins updated" $_tpm all
+    # TPM 的并行更新器在插件失败时也可能返回成功，因此改为逐插件 git pull。
+    set -l tpm_plugins (path filter -d ~/.config/tmux/plugins/*)
+    if test (count $tpm_plugins) -gt 0
+        for plugin in $tpm_plugins
+            test -e "$plugin/.git"; or continue
+            set -l name (path basename $plugin)
+            set -lx GIT_TERMINAL_PROMPT 0
+            _run "$name updated" git -C "$plugin" pull --ff-only
+            and _run "$name submodules updated" git -C "$plugin" submodule update --init --recursive
+        end
     else
-        _skip "TPM (~/.config/tmux/plugins/tpm not found)"
+        _skip "TPM (~/.config/tmux/plugins not found)"
     end
 
     # ── Tools ─────────────────────────────────────────────────────────────────
     _section "Yazi plugins"
     if command -q ya
-        _run "Yazi plugins updated" ya pkg upgrade
+        _run "Yazi plugins updated" _retry 3 ya pkg upgrade
     else
         _skip "ya"
     end
@@ -190,6 +217,6 @@ function u --description "Update everything"
     end
     set_color normal
 
-    functions --erase _section _ok _fail _skip _run
+    functions --erase _section _ok _fail _skip _run _retry
     set -e __u_failures
 end
