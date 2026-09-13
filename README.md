@@ -6,7 +6,7 @@
 
 终端 `Ghostty` · Shell `Fish` · 编辑器 `Neovim` · 提示符 `Starship` · 包管理 `Homebrew`
 
-一份「手写配置进仓库，插件主题交给包管理器」的 dotfiles：仓库里只放我真正手写的部分，其余全部由 `.gitignore` 排除、按需恢复。
+一份「手写配置进仓库，插件主题交给包管理器」的 dotfiles。
 
 [![macOS](https://img.shields.io/badge/macOS-Apple%20Silicon-000000?style=flat-square&logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![Shell](https://img.shields.io/badge/shell-fish-4aae47?style=flat-square)](https://fishshell.com/)
