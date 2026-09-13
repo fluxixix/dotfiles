@@ -50,9 +50,6 @@ symbol = "C++ "
 [cobol]
 symbol = "cobol "
 
-[conda]
-symbol = "conda "
-
 [container]
 symbol = "container "
 

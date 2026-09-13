@@ -9,7 +9,6 @@ Apple Silicon macOS 的个人配置仓库，remote 为 `git@github.com:fluxixix/
 | [aerospace/](aerospace/) | AeroSpace 平铺窗口管理器配置（`aerospace.toml`，含启动时调起 borders、默认布局与归一化行为） |
 | [bat/](bat/) | bat 主题（`themes/Catppuccin Mocha.tmTheme`）与默认 `--theme` 配置 |
 | [btop/](btop/) | btop 资源监视器配置（`btop.conf`，greyscale 主题、`vim_keys`、预设布局） |
-| [conda/](conda/) | Miniforge 的 `.condarc`（清华 TUNA 镜像、conda-forge、`auto_activate`） |
 | [eza/](eza/) | eza 的文件类型与权限配色（`theme.yml`） |
 | [fish/](fish/) | `config.fish`（环境变量、PATH、缩写、fzf、代理）与 `functions/`（`u`、`y`、`proxy`、`unproxy`、`ripgrep_search`）；`fish_plugins` 为 Fisher 插件清单 |
 | [ghostty/](ghostty/) | Ghostty 终端配置（字体、主题、窗口、键位、剪贴板）与 `shaders/` 自定义光标着色器 |
@@ -51,7 +50,7 @@ bash ~/dotfiles/scripts/restore.sh
 脚本会依次完成：
 
 1. 创建 `~/.config` 并写入 `~/.hushlogin`。
-2. 软链接以下配置目录到 `~/.config`：`aerospace bat btop conda eza fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi`。目标已是非软链接的现有文件或目录时，脚本会警告并拒绝覆盖。
+2. 软链接以下配置目录到 `~/.config`：`aerospace bat btop eza fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi`。目标已是非软链接的现有文件或目录时，脚本会警告并拒绝覆盖。
 3. 执行 `brew bundle --file=~/dotfiles/Brewfile` 安装依赖。
 4. 若 `~/.config/tmux/plugins/tpm` 不存在则克隆 TPM，并运行 `install_plugins` 安装 tmux 插件。
 5. 通过 `raw.githubusercontent.com` 引导 Fisher，随后执行 `fisher update` 安装 Fish 插件。
@@ -74,7 +73,7 @@ ya pkg install
 
 ```fish
 mkdir -p ~/.config
-for dir in aerospace bat btop conda eza fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi
+for dir in aerospace bat btop eza fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ```
@@ -106,10 +105,6 @@ end
 | `bc` | `brew autoremove; and brew cleanup --prune=all` |
 | `ts` / `tls` / `tn` / `tk` / `ta` | `tmux source-file ~/.config/tmux/tmux.conf` / `tmux ls` / `tmux new -s` / `tmux kill-session -t` / `tmux attach` |
 | `trw` / `trs` | `tmux rename-window` / `tmux rename-session` |
-| `ca` / `cde` / `cel` | `conda activate` / `conda deactivate` / `conda env list` |
-| `ci` / `cui` / `cs` / `cl` | `conda install` / `conda remove` / `conda search` / `conda list` |
-| `cc` | `conda clean --all -y` |
-| `cu` | `conda update conda -y; and conda update --all -y` |
 | `yau` / `yaa` / `yad` / `yal` | `ya pkg upgrade` / `ya pkg add` / `ya pkg delete` / `ya pkg list` |
 | `el` | `eza --long --header --icons --git --all` |
 | `et` | `eza --tree --level=2 --long --header --icons --git` |
@@ -132,7 +127,6 @@ tmux 以前缀键 `Ctrl-A` 为主：`=` / `-` 水平/垂直分屏，`c` 新建�
 - Homebrew：`brew update` / `upgrade` / `upgrade --cask --greedy` / `autoremove` / `cleanup --prune=all`（不再自动重写 `Brewfile`）。
 - Neovim：`Lazy! sync`、`AstroUpdate`、`MasonToolsUpdate`、`TSUpdateSync`。
 - Go：遍历 `GOPATH/bin` 中的可执行文件，重新 `go install <pkg>@latest`。
-- Conda：`conda update conda`、`conda update --all`、`conda clean --all`。
 - Rust：`rustup update`、`cargo install-update -a`、`cargo cache --autoclean`。
 - Node：`npm update -g`、`npm cache clean --force`、`pnpm update -g`、`pnpm store prune`。
 - Python：`uv tool upgrade --all`。

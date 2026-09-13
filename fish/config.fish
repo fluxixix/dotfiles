@@ -2,7 +2,6 @@ set -g fish_greeting ""
 
 # ── Environment Variables
 set -gx EDITOR nvim
-set -gx CONDA_ROOT "/opt/homebrew/Caskroom/miniforge/base"
 set -gx STARSHIP_CONFIG "$HOME/.config/starship/starship.toml"
 set -gx NPM_CONFIG_USERCONFIG ~/.config/npm/npmrc
 set -gx PNPM_HOME "$HOME/Library/pnpm"
@@ -32,27 +31,6 @@ fish_add_path "$HOME/.strix/bin" # strix
 # ── Homebrew Shell Environment
 if test -x /opt/homebrew/bin/brew
     /opt/homebrew/bin/brew shellenv | source
-end
-
-# ── Conda (lazy)
-function conda
-    if not set -q CONDA_ROOT
-        echo "lazyconda: \$CONDA_ROOT is not set" >&2
-        return 1
-    end
-
-    if test -f "$CONDA_ROOT/bin/conda"
-        eval "$CONDA_ROOT/bin/conda" "shell.fish" hook | source
-        or return $status
-    else if test -f "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-        source "$CONDA_ROOT/etc/fish/conf.d/conda.fish"
-        or return $status
-    else
-        fish_add_path -g "$CONDA_ROOT/bin"
-        functions --erase conda
-    end
-
-    conda $argv
 end
 
 # Happier: point the Codex CLI at the installed executable
@@ -118,17 +96,6 @@ if status is-interactive
     abbr -a ta  'tmux attach'
     abbr -a trw 'tmux rename-window'
     abbr -a trs 'tmux rename-session'
-
-    # Conda
-    abbr -a ca  'conda activate'
-    abbr -a cde 'conda deactivate'
-    abbr -a cel 'conda env list'
-    abbr -a ci  'conda install'
-    abbr -a cui 'conda remove'
-    abbr -a cs  'conda search'
-    abbr -a cl  'conda list'
-    abbr -a cc  'conda clean --all -y'
-    abbr -a cu  'conda update conda -y; and conda update --all -y'
 
     # Yazi
     abbr -a yau 'ya pkg upgrade'

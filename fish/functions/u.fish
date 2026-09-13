@@ -86,14 +86,6 @@ function u --description "Update everything"
         _skip "go"
     end
 
-    # ── Conda / Miniforge ────────────────────────────────────────────────────
-    _section "Conda"
-    if command -q conda
-        _run "Conda updated" bash -lc "conda update conda -y && conda update --all -y && conda clean --all -y"
-    else
-        _skip "conda"
-    end
-
     # ── Rust ──────────────────────────────────────────────────────────────────
     _section "Rust"
     if command -q rustup
