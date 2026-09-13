@@ -62,13 +62,6 @@ for dir in aerospace bat btop conda eza fish ghostty git go-musicfox ideavim laz
 	link_dir "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
 done
 # ──────────────────────────────────────────────────
-# Karabiner
-# ──────────────────────────────────────────────────
-section "Karabiner"
-
-link_dir "$DOTFILES_DIR/karabiner/config" "$CONFIG_DIR/karabiner"
-link_file "$DOTFILES_DIR/karabiner/edn/karabiner.edn" "$CONFIG_DIR/karabiner.edn"
-# ──────────────────────────────────────────────────
 # Brew bundle
 # ──────────────────────────────────────────────────
 section "Brew bundle"
