@@ -52,7 +52,7 @@ bash ~/dotfiles/scripts/restore.sh
 
 ```fish
 mkdir -p ~/.config
-for dir in aerospace bat btop eza fish ghostty git go-musicfox lazygit neovide npm nvim starship tmux yazi
+for dir in aerospace bat btop eza fish ghostty git go-musicfox lazygit npm nvim starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ```
@@ -76,7 +76,6 @@ ya pkg install
 | [git/](git/) | 用户信息、Delta、同步策略与全局忽略（`config`、`ignore`、`themes.gitconfig`） |
 | [go-musicfox/](go-musicfox/) | go-musicfox 配置（`config.toml`） |
 | [lazygit/](lazygit/) | lazygit 配置（`config.yml`，Delta pager 与主题色） |
-| [neovide/](neovide/) | Neovide 配置（`config.toml`，字体、窗口、工作目录） |
 | [npm/](npm/) | npm 配置（`npmrc`，缓存路径） |
 | [nvim/](nvim/) | 基于 lazy.nvim 的 AstroNvim v5 配置（`init.lua`、`lua/`、`lazy-lock.json`） |
 | [scripts/](scripts/) | 部署与维护脚本（`restore.sh`、`setup.sh`、rime 更新脚本）；`privacy-*.sh` 由 privacy.sexy 生成，不入库 |
@@ -96,7 +95,6 @@ ya pkg install
 | 提示符 | Starship | [starship/](starship/) |
 | 多路复用 | tmux（前缀键 `Ctrl-A`）+ TPM | [tmux/](tmux/) |
 | 编辑器 | Neovim（AstroNvim v5，lazy.nvim 管理） | [nvim/](nvim/) |
-| GUI 编辑器 | Neovide | [neovide/](neovide/) |
 | 文件管理 | Yazi、eza、bat | [yazi/](yazi/)、[eza/](eza/)、[bat/](bat/) |
 | 搜索 | ripgrep + fzf（`Ctrl-G` 实时搜索） | [fish/functions/](fish/functions/) |
 | 窗口管理 | AeroSpace + borders | [aerospace/](aerospace/) |
@@ -111,7 +109,7 @@ ya pkg install
 flowchart TD
     A["git clone → ~/dotfiles"] --> B["bash scripts/restore.sh"]
     B --> C["准备：创建 ~/.config 与 ~/.hushlogin"]
-    C --> D["软链接 15 个配置目录到 ~/.config"]
+    C --> D["软链接 14 个配置目录到 ~/.config"]
     D --> E["brew bundle --file=~/dotfiles/Brewfile"]
     E --> F["克隆 TPM 并 install_plugins"]
     F --> G["写入 /etc/shells 并 chsh 切换 Fish"]
