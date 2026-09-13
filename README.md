@@ -52,7 +52,7 @@ bash ~/dotfiles/scripts/restore.sh
 
 ```fish
 mkdir -p ~/.config
-for dir in aerospace bat btop eza fish ghostty git go-musicfox lazygit mole neovide npm nvim starship tmux yazi
+for dir in aerospace bat btop eza fish ghostty git go-musicfox lazygit neovide npm nvim starship tmux yazi
     ln -s ~/dotfiles/$dir ~/.config/$dir
 end
 ```
@@ -71,7 +71,7 @@ ya pkg install
 | [bat/](bat/) | bat 主题（`themes/Catppuccin Mocha.tmTheme`）与默认 `--theme` 配置 |
 | [btop/](btop/) | btop 资源监视器配置（`btop.conf`，greyscale 主题、`vim_keys`、预设布局） |
 | [eza/](eza/) | eza 的文件类型与权限配色（`theme.yml`） |
-| [fish/](fish/) | `config.fish`（环境变量、PATH、缩写、fzf、代理）与 `functions/`（`u`、`y`、`proxy`、`unproxy`、`ripgrep_search`）；`fish_plugins` 为 Fisher 插件清单 |
+| [fish/](fish/) | `config.fish`（环境变量、PATH、缩写、fzf、代理）、`functions/`（`u`、`y`、`proxy`、`unproxy`、`ripgrep_search`）与 `themes/`（Rosé Pine 主题）；`fish_plugins` 为 Fisher 插件清单 |
 | [ghostty/](ghostty/) | Ghostty 终端配置（字体、主题、窗口、键位、剪贴板）与 `shaders/` 自定义光标着色器 |
 | [git/](git/) | 用户信息、Delta、同步策略与全局忽略（`config`、`ignore`、`themes.gitconfig`） |
 | [go-musicfox/](go-musicfox/) | go-musicfox 配置（`config.toml`） |
@@ -79,13 +79,13 @@ ya pkg install
 | [neovide/](neovide/) | Neovide 配置（`config.toml`，字体、窗口、工作目录） |
 | [npm/](npm/) | npm 配置（`npmrc`，缓存路径） |
 | [nvim/](nvim/) | 基于 lazy.nvim 的 AstroNvim v5 配置（`init.lua`、`lua/`、`lazy-lock.json`） |
-| [scripts/](scripts/) | 部署与维护脚本（`restore.sh`、`setup.sh`、隐私清理/配置脚本、rime 更新脚本） |
+| [scripts/](scripts/) | 部署与维护脚本（`restore.sh`、`setup.sh`、rime 更新脚本）；`privacy-*.sh` 由 privacy.sexy 生成，不入库 |
 | [starship/](starship/) | Starship 提示符及各模块符号（`starship.toml`） |
 | [tmux/](tmux/) | `tmux.conf`（前缀键、TPM 插件）与 `tmux.conf.local` |
 | [yazi/](yazi/) | 文件管理器配置（`init.lua`、`keymap.toml`、`theme.toml`、`yazi.toml`、`package.toml`） |
 | [Brewfile](Brewfile) | Homebrew、Cask、Mac App Store、VS Code、Cargo、uv 依赖清单 |
 
-`yazi/plugins/`、`yazi/flavors/`、`fish/completions/`、`fish/conf.d/`、`fish/themes/`、`tmux/plugins/`、`mole/` 及部分 Fisher/fzf 生成的函数已在 `.gitignore` 中排除，需要由对应包管理器恢复。
+`yazi/plugins/`、`yazi/flavors/`、`fish/completions/`、`fish/conf.d/`、`tmux/plugins/` 及部分 Fisher/fzf 生成的函数已在 `.gitignore` 中排除，需要由对应包管理器恢复；`scripts/privacy-*.sh` 是 privacy.sexy 生成的产物，同样不入库。
 
 ## 🧰 技术栈
 
@@ -111,7 +111,7 @@ ya pkg install
 flowchart TD
     A["git clone → ~/dotfiles"] --> B["bash scripts/restore.sh"]
     B --> C["准备：创建 ~/.config 与 ~/.hushlogin"]
-    C --> D["软链接 16 个配置目录到 ~/.config"]
+    C --> D["软链接 15 个配置目录到 ~/.config"]
     D --> E["brew bundle --file=~/dotfiles/Brewfile"]
     E --> F["克隆 TPM 并 install_plugins"]
     F --> G["写入 /etc/shells 并 chsh 切换 Fish"]
@@ -206,7 +206,7 @@ tmux 以前缀键 `Ctrl-A` 为主：`=` / `-` 水平/垂直分屏，`c` 新建�
 
 ## 💡 设计取舍
 
-**仓库只放手写配置。** 由包管理器分发的插件、flavor、补全与主题（见上方 `.gitignore` 说明）不入库，交给 Fisher / TPM / `ya pkg` / lazy.nvim 各自恢复。仓库因此保持小而可读，代价是首次部署多几步。
+**仓库只放手写配置。** 由包管理器分发的插件、flavor 与补全（见上方 `.gitignore` 说明）不入库，交给 Fisher / TPM / `ya pkg` / lazy.nvim 各自恢复。仓库因此保持小而可读，代价是首次部署多几步。
 
 **一个工具一个目录，一个软链接。** 目录名与 `~/.config` 下的名字一一对应，不写映射表、不做条件分支，新增工具只是往 `restore.sh` 的清单里加一个名字。
 

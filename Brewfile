@@ -1,7 +1,5 @@
 tap "go-musicfox/go-musicfox", trusted: true
-tap "anomalyco/tap", trusted: true
 tap "felixkratz/formulae", trusted: true
-tap "hmbown/deepseek-tui", trusted: true
 tap "nikitabobko/tap", trusted: true
 tap "oven-sh/bun", trusted: true
 tap "tw93/tap", trusted: true
@@ -27,13 +25,11 @@ brew "handbrake"
 brew "imagemagick"
 brew "jq"
 brew "lazygit"
-brew "llvm"
 brew "macmon"
 brew "mas"
 brew "neovim"
 brew "node"
 brew "ripgrep"
-brew "opencode"
 brew "openjdk"
 brew "pnpm"
 brew "redis"
@@ -47,7 +43,6 @@ brew "yazi"
 brew "zoxide"
 brew "go-musicfox/go-musicfox/go-musicfox"
 brew "felixkratz/formulae/borders"
-brew "hmbown/deepseek-tui/deepseek-tui"
 brew "oven-sh/bun/bun"
 brew "tw93/tap/mole"
 cask "nikitabobko/tap/aerospace"
@@ -95,7 +90,6 @@ vscode "ms-vscode.live-server"
 vscode "ms-vscode.remote-explorer"
 vscode "ms-vscode.remote-server"
 vscode "shd101wyy.markdown-preview-enhanced"
-vscode "sst-dev.opencode"
 vscode "zainchen.json"
 vscode "zhuangtongfa.material-theme"
 cargo "cargo-cache"
