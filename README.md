@@ -36,7 +36,7 @@ Apple Silicon macOS 的个人配置仓库，remote 为 `git@github.com:fluxixix/
 - 安装 Homebrew 与 Git，并配置好 GitHub SSH 访问（`scripts/setup.sh` 可代为生成密钥并写入 `~/.ssh/config`；首次使用需先在 GitHub 添加公钥）。
 - 登录 Mac App Store 账户，Brewfile 中包含 `mas` 应用。
 
-克隆到 `~/dotfiles`（必须放在该路径：`u` 会用 `brew bundle dump` 重写 `~/dotfiles/Brewfile`，`scripts/setup.sh` 也默认克隆到此目录）：
+克隆到 `~/dotfiles`（建议放在该路径：`scripts/setup.sh` 固定按 `$HOME/dotfiles` 克隆并调用其中的 `restore.sh`）：
 
 ```sh
 git clone git@github.com:fluxixix/dotfiles.git ~/dotfiles
@@ -130,7 +130,7 @@ tmux 以前缀键 `Ctrl-A` 为主：`=` / `-` 水平/垂直分屏，`c` 新建�
 
 `u` 会就地更新以下内容，某一项失败会继续执行其余独立步骤，并累计失败次数：
 
-- Homebrew：`brew update` / `upgrade` / `upgrade --cask --greedy` / `autoremove` / `cleanup --prune=all`，并以 `brew bundle dump` 重写 `~/dotfiles/Brewfile`（`--no-vscode --no-describe`）。
+- Homebrew：`brew update` / `upgrade` / `upgrade --cask --greedy` / `autoremove` / `cleanup --prune=all`（不再自动重写 `Brewfile`）。
 - Chrome：`sudo` 清空并锁定其自动更新与 AI 模型目录。
 - Neovim：`Lazy! sync`、`AstroUpdate`、`MasonToolsUpdate`、`TSUpdateSync`。
 - Go：遍历 `GOPATH/bin` 中的可执行文件，重新 `go install <pkg>@latest`。
@@ -146,5 +146,7 @@ tmux 以前缀键 `Ctrl-A` 为主：`=` / `-` 水平/垂直分屏，`c` 新建�
 结尾会输出 `✓ All updated` 或 `✗ Update finished with N failure(s)`，以失败计数汇总结果（函数本身不会返回非零退出码）。`u` 不会拉取本仓库，配置同步需自行执行 Git 操作。
 
 Homebrew 现在要求非官方 tap 显式信任，本仓库已在 Brewfile 中为所有第三方 tap 声明 `trusted: true`，因此 `brew bundle` 无需手动交互。
+
+`Brewfile` 由手工维护：`u` 不再自动生成它，新增或移除依赖需要手动编辑，并为非官方 tap 保留 `trusted: true`。
 
 配置按功能分组，标题沿用 `# ── 类别 ──` 的注释样式（见 `fish/config.fish`、`fish/functions/u.fish`）。
