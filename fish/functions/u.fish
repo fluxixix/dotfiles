@@ -58,23 +58,6 @@ function u --description "Update everything"
     _section "Homebrew"
     _run "Homebrew done" bash -lc "brew update && brew upgrade --no-ask && brew upgrade --cask --greedy --no-ask && brew autoremove && brew cleanup --prune=all"
 
-    # ── Google Chrome — block auto-update & AI model download ─────────────
-    _section "Chrome (lock updater & AI models)"
-    if test -d "/Applications/Google Chrome.app"
-        for _dir in \
-            "$HOME/Library/Application Support/Google/GoogleUpdater" \
-            "$HOME/Library/Application Support/Google/Chrome/OptGuideOnDeviceModel" \
-            "$HOME/Library/Application Support/Google/Chrome/optimization_guide_model_store"
-            sudo rm -rf $_dir
-            mkdir -p $_dir
-            sudo chown root $_dir
-            sudo chmod 000 $_dir
-        end
-        _ok "Chrome locked"
-    else
-        _skip "Google Chrome"
-    end
-
     # ── Neovim (AstroNvim) ────────────────────────────────────────────────────
     _section "Neovim"
     if command -q nvim

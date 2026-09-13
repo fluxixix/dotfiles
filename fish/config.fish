@@ -90,7 +90,6 @@ if status is-interactive
     abbr -a mf  'musicfox'
     abbr -a py  'python'
     abbr -a ip  'ipconfig getifaddr en0'
-    abbr -a disk 'smartctl -a disk3'
     abbr -a copy 'pbcopy'
     abbr -a ports 'lsof -i -P | grep -i "listen"'
     abbr -a qc  'qoderclicn'

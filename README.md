@@ -92,7 +92,6 @@ end
 | `mf` | `musicfox` |
 | `py` | `python` |
 | `ip` | `ipconfig getifaddr en0` |
-| `disk` | `smartctl -a disk3` |
 | `copy` | `pbcopy` |
 | `ports` | `lsof -i -P \| grep -i "listen"` |
 | `qc` | `qoderclicn` |
@@ -131,7 +130,6 @@ tmux 以前缀键 `Ctrl-A` 为主：`=` / `-` 水平/垂直分屏，`c` 新建�
 `u` 会就地更新以下内容，某一项失败会继续执行其余独立步骤，并累计失败次数：
 
 - Homebrew：`brew update` / `upgrade` / `upgrade --cask --greedy` / `autoremove` / `cleanup --prune=all`（不再自动重写 `Brewfile`）。
-- Chrome：`sudo` 清空并锁定其自动更新与 AI 模型目录。
 - Neovim：`Lazy! sync`、`AstroUpdate`、`MasonToolsUpdate`、`TSUpdateSync`。
 - Go：遍历 `GOPATH/bin` 中的可执行文件，重新 `go install <pkg>@latest`。
 - Conda：`conda update conda`、`conda update --all`、`conda clean --all`。
