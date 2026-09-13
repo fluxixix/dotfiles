@@ -38,10 +38,39 @@ touch "$HOME/.hushlogin"
 # ──────────────────────────────────────────────────
 # Functions
 # ──────────────────────────────────────────────────
+find_brew() {
+	local candidate
+	if command -v brew &>/dev/null; then
+		command -v brew
+		return 0
+	fi
+	for candidate in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+		if [[ -x "$candidate" ]]; then
+			echo "$candidate"
+			return 0
+		fi
+	done
+	return 1
+}
+
+setup_homebrew_env() {
+	local brew_path
+	brew_path="$(find_brew)" || return 1
+	eval "$("$brew_path" shellenv)"
+}
+
 link_dir() {
 	local src="$1" dst="$2"
-	if [[ -L "$dst" || -e "$dst" ]]; then
-		rm -rf "$dst"
+	if [[ ! -d "$src" ]]; then
+		warn "Missing source dir: $src, skipping"
+		return 1
+	fi
+	mkdir -p "$(dirname "$dst")"
+	if [[ -L "$dst" ]]; then
+		rm "$dst"
+	elif [[ -e "$dst" ]]; then
+		warn "$dst exists and is not a symlink, refusing to replace it"
+		return 1
 	fi
 	ln -s "$src" "$dst"
 	info "Linked dir  $dst → $src"
@@ -49,8 +78,18 @@ link_dir() {
 
 link_file() {
 	local src="$1" dst="$2"
+	if [[ ! -f "$src" ]]; then
+		warn "Missing source file: $src, skipping"
+		return 1
+	fi
 	mkdir -p "$(dirname "$dst")"
-	ln -sf "$src" "$dst"
+	if [[ -L "$dst" ]]; then
+		rm "$dst"
+	elif [[ -e "$dst" ]]; then
+		warn "$dst exists and is not a symlink, refusing to replace it"
+		return 1
+	fi
+	ln -s "$src" "$dst"
 	info "Linked file $dst → $src"
 }
 # ──────────────────────────────────────────────────
@@ -59,13 +98,14 @@ link_file() {
 section "Config dirs"
 
 for dir in aerospace bat btop conda eza fish ghostty git go-musicfox ideavim lazygit mole neovide npm nvim starship tmux yazi; do
-	link_dir "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir"
+	link_dir "$DOTFILES_DIR/$dir" "$CONFIG_DIR/$dir" || true
 done
 # ──────────────────────────────────────────────────
 # Brew bundle
 # ──────────────────────────────────────────────────
 section "Brew bundle"
 
+setup_homebrew_env || die "Homebrew not found. Install Homebrew first."
 brew bundle --file="$DOTFILES_DIR/Brewfile"
 # ──────────────────────────────────────────────────
 # TPM
@@ -129,7 +169,7 @@ section "Fisher"
 
 if ! fish -c "functions -q fisher" &>/dev/null; then
 	mkdir -p "$HOME/.local/share/fish/site-functions"
-	curl -sL https://git.io/fisher | fish 2>/dev/null
+	curl --fail --silent --show-error --location https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | fish 2>/dev/null
 	if fish -c "functions -q fisher" &>/dev/null; then
 		info "Fisher installed"
 	else
