@@ -1,0 +1,43 @@
+name: CI
+
+# 触发：主分支推送、所有 PR，以及手动触发
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+# 同一 ref 连续推送时取消旧运行，避免排队浪费
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 最小权限：本流程只读仓库内容
+permissions:
+  contents: read
+
+# 关闭 Homebrew 自动更新，避免 CI 中缓慢的 auto-update
+env:
+  HOMEBREW_NO_AUTO_UPDATE: 1
+
+jobs:
+  check:
+    # macos-latest 当前为 arm64，与脚本中 /opt/homebrew 的路径假设一致
+    runs-on: macos-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v7
+
+      - name: 安装校验工具（shellcheck / fish，已安装则跳过）
+        run: |
+          brew list --formula shellcheck >/dev/null 2>&1 || brew install shellcheck
+          brew list --formula fish >/dev/null 2>&1 || brew install fish
+
+      - name: 静态检查 + 仓库一致性检查
+        run: bash scripts/ci-check.sh --all
+
+      - name: 沙箱冒烟测试（假 HOME + PATH 桩）
+        run: bash scripts/restore-sandbox-test.sh

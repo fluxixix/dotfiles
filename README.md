@@ -15,6 +15,7 @@
 [![Homebrew](https://img.shields.io/badge/packages-Homebrew-FBB040?style=flat-square&logo=homebrew&logoColor=white)](https://brew.sh/)
 [![Last commit](https://img.shields.io/github/last-commit/fluxixix/dotfiles?style=flat-square)](https://github.com/fluxixix/dotfiles/commits/main)
 [![Stars](https://img.shields.io/github/stars/fluxixix/dotfiles?style=flat-square&color=yellow)](https://github.com/fluxixix/dotfiles/stargazers)
+[![CI](https://img.shields.io/github/actions/workflow/status/fluxixix/dotfiles/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/fluxixix/dotfiles/actions/workflows/ci.yml)
 
 </div>
 
@@ -27,6 +28,7 @@
 - [配置怎么落到 `~/.config`](#-配置怎么落到-config)
 - [常用操作](#️-常用操作)
 - [更新与维护](#-更新与维护)
+- [本地校验](#-本地校验)
 - [设计取舍](#-设计取舍)
 
 ## 🚀 快速开始
@@ -201,6 +203,24 @@ tmux 以前缀键 `Ctrl-A` 为主：`=` / `-` 水平/垂直分屏，`c` 新建�
 - Mac App Store：`mas upgrade`；Mole：`mo clean` 与 `mo purge`；并清理 CleanShot 的媒体缓存。
 
 结尾会输出 `✓ All updated` 或 `✗ Update finished with N failure(s)`，以失败计数汇总结果（函数本身不会返回非零退出码）。`u` 不会拉取本仓库，配置同步需自行执行 Git 操作。
+
+## ✅ 本地校验
+
+CI 与本地共用同一套脚本，两条命令即可在提交前复现流水线。
+
+`bash scripts/ci-check.sh`（静态检查 + 一致性检查）：
+
+- 静态检查：被跟踪的 shell 脚本 `bash -n`、`shellcheck` 的 error 级、`Brewfile` 的 `ruby -c`、fish 文件 `fish -n`。
+- 一致性检查：部署清单 ↔ 仓库实物 ↔ README 逐项一致、被忽略的文件未被重新跟踪、`Brewfile` 的 tap 无死条目且都带 `trusted: true`。
+- 仅报告、不阻断的项：`.gitignore` 中的死规则与失效软链接。
+
+`bash scripts/restore-sandbox-test.sh` 在**假 `HOME`** 与 **PATH 桩命令**下完整跑一遍 `scripts/restore.sh`，断言退出码、清单中每个软链接是否正确建立、无失效链接、幂等、拒绝覆盖已被真实目录占用的目标，以及桩命令日志证明没有真的安装/卸载任何软件。
+
+CI 在 GitHub 托管的 arm64 macOS runner 上执行上面两条命令，触发时机是 push 到 `main`、PR 与手动触发。
+
+**不覆盖范围**：不真的执行 `brew bundle` 安装 `Brewfile` 里的软件、不执行 `chsh` 与写 `/etc/shells`、不执行 `scripts/setup.sh` 的 SSH 与 Homebrew 安装段、不做真实的端到端安装验证。
+
+**提交前自测**：改了 `restore.sh` 的清单或 `Brewfile` 之后，先跑 `bash scripts/ci-check.sh`。
 
 ## 💡 设计取舍
 
